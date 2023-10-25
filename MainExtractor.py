@@ -1,4 +1,6 @@
 import spacy
+import os
+import argparse
 
 import SpacyEssentials as se
 import VerbRelationExtractor as ve
@@ -252,10 +254,22 @@ def main(transformer, inputFile, outputFileFacets, outputFileCombined):
 
 
 if __name__ == '__main__':
-    spacyTransformer = 'de_dep_news_trf'
+    parser = argparse.ArgumentParser(description='Usage of the extractor',
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    inputFile = open('BenchIE/data/gold/sentences_de.txt', 'r', encoding='utf-8')
-    outputFileFacets = open('extractedTuplesFacets.txt', 'w', encoding='utf-8')
-    outputFileCombined = open('extractedTuplesCombined.txt', 'w', encoding='utf-8')
+    parser.add_argument('src', help='input file')
+    parser.add_argument('--dest', default=os.getcwd(), help='folder for the results')
+    parser.add_argument('--model', default='de_dep_news_trf', help='spaCy model')
+
+    args = parser.parse_args()
+    config = vars(args)
+
+    inputPath = config['src']
+    outputPath = config['dest']
+    spacyTransformer = config['model']
+
+    inputFile = open(inputPath, 'r', encoding='utf-8')
+    outputFileFacets = open(os.path.join(outputPath, 'extractedTuplesWithFacets.txt'), 'w', encoding='utf-8')
+    outputFileCombined = open(os.path.join(outputPath, 'extractedTuples.txt'), 'w', encoding='utf-8')
 
     main(spacyTransformer, inputFile, outputFileFacets, outputFileCombined)
